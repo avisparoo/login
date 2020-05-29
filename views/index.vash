@@ -2,5 +2,27 @@
   @html.block('content', function(model) {
     <h1>@model.title</h1>
     <p>Welcome to @model.title</p>
+    <button type="button" onclick="javascript:users();">Show all user</button>
+    <div id="res"></div>
+
+    <script>
+    function users(){
+      $.ajax({
+      url: '/users',
+      type: 'GET',
+      contentType: 'application/json',
+      success: function(data, text, xhr) {
+        var display = '<p>The users list is below:</p>';
+        data.forEach(element => {
+          display+='<ul><li> Name:'+element.name+ '</li><li> Email id:' +element.email+'</lil></ul>'
+        });
+        $('#res').append(display);
+      },
+      error: function(xhr, text, err) {
+        $('#res').html(xhr.responseJSON.error)
+      }
+    })
+    }
+    </script>
   })
 })
