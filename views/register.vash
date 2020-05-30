@@ -1,0 +1,62 @@
+@html.extend('layout', function(model) {
+  @html.block('content', function(model) {
+      <h3> @model.title for new users </h3>
+      <table>
+      <tr>
+      <td><label for="name">Enter name:</label></td>
+      <td><input type="text" id="name" name="name"></td>
+      </tr>
+      <tr>
+      <td><label for="email">Enter email:</label></td>
+      <td><input type="text" id="email" name="email"></td>
+      </tr>
+      <tr>
+      <td><label for="pass">Enter password:</label></td>
+      <td><input type="password" id="pass" name="pass"></td>
+      </tr> 
+      </table>
+      <br>
+      <button type="button" onclick="javascript:newuser();">Register</button>
+      <p>Have an account? <a href="/">Log in now</a></p>
+      <br>
+      <div id="res"> </div>
+
+      <script>
+      function newuser(){
+        var body={};
+        var x=$('#name').val();
+        var y=$('#email').val();
+        var z=$('#pass').val();
+        var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+        if(Number(x) || (x=="")){
+             $('#res').html('Error: Number or blank space entered in name')
+        }
+        else if(!y.match(mailformat)){
+          $('#res').html('Error: Invalid email')
+        }
+        else if(z.length<3){
+          $('#res').html('Error: Password length to be atleast 3char')
+        }
+        else{  
+          body.name=x;
+          body.email=y;
+          body.pass=z;
+                
+          $.ajax({
+              url: '/reg',
+              type: 'POST',
+              data: JSON.stringify(body),
+              contentType: 'application/json',
+              success: function(data, text, xhr) {
+                  $('#res').html('<p>User '+data.result+' has been registered successfully.</p>');
+              },
+              error: function(xhr, text, err) {
+                $('#res').html(xhr.responseJSON.error);
+              }
+          })  
+        }                         
+      }
+      </script>
+  })
+})  
