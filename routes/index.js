@@ -9,11 +9,11 @@ mongoose.connect('mongodb+srv://apoorva:apoorva123@cluster0-xv4i2.mongodb.net/lo
   });
 
 //to check mongdb connection
-  var db = mongoose.connection;
-  db.on('error', console.error.bind(console, 'connection error:'));
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
   /*db.once('open', function() {
-    console.log(db.readyState);  
-  });*/
+  console.log(db.readyState);
+});*/
 
 //create schema and model
   var userschema = new mongoose.Schema({
@@ -26,17 +26,11 @@ mongoose.connect('mongodb+srv://apoorva:apoorva123@cluster0-xv4i2.mongodb.net/lo
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Users' });
-  //console.log(mongoose.connection.readyState);  //to check mongdb connection
 });
 
 /* GET all users. */
 router.get('/users', function (req, res, next) {
   users.find({}, function (err, data) {
-    /*console.log(err, data, data.length);
-    data.forEach(element => {
-      console.log(element.name);
-      console.log(element.email);
-    });*/
     if (data.length<1){
       res.status(400);
       res.json({error:"No users in the collection"});
@@ -50,9 +44,8 @@ router.get('/users', function (req, res, next) {
 });
 
 /* GET register page. */
-router.get('/register', function(req, res, next) {
+router.get('/register', function (req, res, next) {
   res.render('register', { title: 'Registration' });
-  //console.log(mongoose.connection.readyState);  //to check mongdb connection
 });
 
 /* post register page. */
@@ -61,18 +54,13 @@ router.post('/reg', function (req, res, next) {
   if (req.body.name == "" || req.body.email == "" || req.body.pass == "") {
     res.status(400);
     res.json({ error: "Invalid entry" });
-  } 
-  /*if (typeof(req.body.name) != string || typeof(req.body.email) != string || typeof(req.body.pass) != string) {
-    res.status(400);
-    res.json({ error: "Invalid entry" });
-  } */
+  }
   else {
     //check if user already exists
-    users.find({email:req.body.email}, function (err, data) {
-
-      if(data.length>0){
+    users.find({ email: req.body.email }, function (err, data) {
+      if (data.length > 0) {
         res.status(400);
-        res.json({error: "User with same emailid already exists"});
+        res.json({ error: "User with same emailid already exists" });
       }
       else {
         // a document instance
@@ -82,7 +70,7 @@ router.post('/reg', function (req, res, next) {
           if (err) {
             console.error(err);
             res.status(400);
-            res.json({ error: "Error while saving model to database" })
+            res.json({ error: "Error while saving model to database" });
           }
           else {
             var q = users.name;
@@ -94,4 +82,29 @@ router.post('/reg', function (req, res, next) {
     });
   }
 });
+
+// POST to check login. 
+router.post('/login', function (req, res, next) {
+  if (req.body.email == "" || req.body.pass == "") {
+    res.status(400);
+    res.json({ error: "Invalid entry" });
+  } else {
+    users.find({ email: req.body.email }, function (err, data) {
+      if (data.length !== 1) {
+        res.status(400);
+        res.json({ error: "User does not exist" });
+      } else if (data[0].pass !== req.body.pass) {
+        res.status(400);
+        res.json({ error: "Password is incorrect" });
+      } else {
+        res.status(200);
+      }
+    });
+  }
+});
+
+router.get('/user', function (req, res, next) {
+  res.render('user', { user: "avis" });
+});
+
 module.exports = router;

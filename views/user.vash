@@ -1,0 +1,12 @@
+@html.extend('layout', function(model) {
+  @html.block('content', function(model) {
+    <h3> Hello @model.user! </h3>
+    <button type="button" onclick="javascript:logout();">Logout</button>
+
+    <script>
+    function logout (){
+        
+    }
+    </script>
+  })
+})  

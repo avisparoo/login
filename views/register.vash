@@ -29,7 +29,7 @@
         var z=$('#pass').val();
         var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
-        if(Number(x) || (x=="")){
+        if(Number(x) || ($.trim(x)=="")){
              $('#res').html('Error: Number or blank space entered in name')
         }
         else if(!y.match(mailformat)){
