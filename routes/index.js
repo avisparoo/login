@@ -25,7 +25,13 @@ db.on('error', console.error.bind(console, 'connection error:'));
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Users' });
+    if(req.cookies['userid']){
+    users.find({_id:req.cookies['userid']}, function (err, data) {
+    res.redirect('/user');   
+    });    
+  }else{
+    res.render('index', { title: 'Users' });    
+  }
 });
 
 /* GET all users. */
@@ -45,10 +51,16 @@ router.get('/users', function (req, res, next) {
 
 /* GET register page. */
 router.get('/register', function (req, res, next) {
-  res.render('register', { title: 'Registration' });
+  if(req.cookies['userid']){
+    users.find({_id:req.cookies['userid']}, function (err, data) {
+    res.redirect('/user');   
+    });    
+  }else{
+    res.render('register', { title: 'Registration' });
+  }
 });
 
-/* post register page. */
+/* POST register page. */
 router.post('/reg', function (req, res, next) {
   
   if (req.body.name == "" || req.body.email == "" || req.body.pass == "") {
@@ -97,14 +109,25 @@ router.post('/login', function (req, res, next) {
         res.status(400);
         res.json({ error: "Password is incorrect" });
       } else {
+        
+        //set cookie here
+        res.cookie('userid', data[0].id);
         res.status(200);
+        res.send();
       }
     });
   }
 });
 
+//GET user page.
 router.get('/user', function (req, res, next) {
-  res.render('user', { user: "avis" });
+  if(req.cookies['userid']){
+    users.find({_id:req.cookies['userid']}, function (err, data) {
+      res.render('user', { user: data.name });
+    });    
+  }else{
+    res.redirect('/');    
+  }
 });
 
 module.exports = router;

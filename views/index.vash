@@ -58,7 +58,9 @@ function login() {
             type: 'POST',
             data: JSON.stringify(body),
             contentType: 'application/json',
-            success: window.location.href = "/user",
+            success: function (data, text, xhr) {
+              window.location.href = "/user"
+              },
             error: function(xhr, text, err) {
                 $('#res').html(xhr.responseJSON.error);
               }
