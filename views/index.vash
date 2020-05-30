@@ -2,29 +2,76 @@
   @html.block('content', function(model) {
     <h1>@model.title</h1>
     <p>Welcome to @model.title</p>
-    <button type="button" onclick="javascript:users();">Show all user</button>
+      <table>
+      <tr>
+      <td><label for="email">Email:</label></td>
+      <td><input type="text" id="email" name="email"></td>
+      </tr>
+      <tr>
+      <td><label for="pass">Password:</label></td>
+      <td><input type="password" id="pass" name="pass"></td>
+      </tr> 
+      </table>
+    <br>
+    <button type="button" onclick="javascript:login();">Login</button>
     <br>
     <a href="/register">Register a new user</a>
-    <div id="res"></div>
+    <br>
+    <button type="button" onclick="javascript:users();">Show all user</button>
+        <div id="res"></div>
 
-    <script>
-    function users(){ 
-      $.ajax({
-      url: '/users',
-      type: 'GET',
-      contentType: 'application/json',
-      success: function(data, text, xhr) {
-        var display = '<p>The users list is below:</p>';
-        data.forEach(element => {
-          display+='<ul><li> Name:'+element.name+ '</li><li> Email id:' +element.email+'</lil></ul>'
-        });
-        $('#res').html(display);
-      },
-      error: function(xhr, text, err) {
-        $('#res').html(xhr.responseJSON.error)
-      }
+<script > 
+function users() {
+    $.ajax({
+        url: '/users',
+        type: 'GET',
+        contentType: 'application/json',
+        success: function (data, text, xhr) {
+            var display = '<p>The users list is below:</p>';
+            data.forEach(element => {
+                display += '<ul><li> Name:' + element.name + '</li><li> Email id:' + element.email + '</lil></ul>'
+            });
+            $('#res').html(display);
+        },
+        error: function (xhr, text, err) {
+            $('#res').html(xhr.responseJSON.error)
+        }
     })
+}
+
+function login() {
+    var body = {};
+    var y = $('#email').val();
+    var z = $('#pass').val();
+    var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+    if (! y.match(mailformat)) {
+        $('#res').html('Error: Invalid email');
+    } else if (z.length < 3) {
+        $('#res').html('Error: Incorrect password');
+    } else {
+        body.email = y;
+        body.pass = z;
+
+        $.ajax({
+            url: '/login',
+            type: 'POST',
+            data: JSON.stringify(body),
+            contentType: 'application/json',
+            success: function (data, text, xhr) {
+              window.location.href = "/user"
+              },
+            error: function(xhr, text, err) {
+                $('#res').html(xhr.responseJSON.error);
+              }
+
+            
+        })
     }
-    </script>
+
+}
+
+</script>
+
   })
 })
