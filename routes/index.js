@@ -123,11 +123,18 @@ router.post('/login', function (req, res, next) {
 router.get('/user', function (req, res, next) {
   if(req.cookies['userid']){
     users.find({_id:req.cookies['userid']}, function (err, data) {
-      res.render('user', { user: data.name });
+      res.render('user', { user: data[0].name });
     });    
   }else{
     res.redirect('/');    
   }
+});
+
+//GET logout.
+router.get('/logout', function (req, res, next) {
+  res.clearCookie('userid');
+  res.status(200);
+  res.send();
 });
 
 module.exports = router;

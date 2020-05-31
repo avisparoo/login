@@ -2,10 +2,21 @@
   @html.block('content', function(model) {
     <h3> Hello @model.user! </h3>
     <button type="button" onclick="javascript:logout();">Logout</button>
+    <div id="res"></div>
 
     <script>
     function logout (){
-        
+        $.ajax({
+            url: '/logout',
+            type: 'GET',
+            contentType: 'application/json',
+            success: function (data, text, xhr) {
+              window.location.href = "/"
+              },
+            error: function(xhr, text, err) {
+                $('#res').html(xhr.responseJSON.error);
+              }
+        })
     }
     </script>
   })
