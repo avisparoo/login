@@ -1,12 +1,26 @@
 pipeline {
   agent any
+    
+  tools {nodejs "node"}
+    
   stages {
-    stage('build') {
+        
+    stage('Cloning Git') {
       steps {
-        sh '''npm install
-npm start'''
+        git 'https://github.com/avisparoo/login'
       }
     }
-
+        
+    stage('Install dependencies') {
+      steps {
+        sh 'npm install'
+      }
+    }
+     
+    stage('Start') {
+      steps {
+         sh 'npm start'
+      }
+    }      
   }
 }
